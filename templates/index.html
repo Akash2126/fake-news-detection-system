@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fake News Detection System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(120deg, hwb(132 31% 11%), #4d3db7);
+            color: #040e17;
+        }
+        .navbar {
+            background-color: #00b330;
+        }
+        .navbar a {
+            color: white !important;
+        }
+        .hero {
+            background-image: url('https://media.istockphoto.com/id/866600030/photo/abstract-cyberspace-concept.jpg?s=2048x2048&w=is&k=20&c=CxM2QD-E8GjadfFzJHCIFPLCUWt-o9NMDCYA5DtkTDw=');
+            background-size: cover;
+            background-position: center;
+            height: 400px;
+            color: rgb(243, 234, 238);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .hero p {
+            font-size: 1.5rem;
+        }
+        .testimonial-card {
+            margin: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+        }
+        .footer {
+            background-color: #9c3ddb;
+            color: rgb(35, 33, 33);
+            padding: 20px 0;
+            text-align: center;
+        }
+        .loading-spinner {
+            display: none;
+            width: 30px;
+            height: 30px;
+        }
+        .predict-btn {
+            position: relative;
+        }
+        .testimonial-img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="#">Fake News Detector</a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="#prediction">Prediction</a></li>
+        </ul>
+    </div>
+</nav>
+
+<section id="home" class="hero">
+    <h1>Fake News Detection System</h1>
+    <p>Accurately identify fake news headlines with our system.</p>
+</section>
+
+<section id="prediction" class="container my-5">
+    <h2 class="text-center mb-4">Predict Fake News</h2>
+    <form id="newsForm">
+        <div class="form-group">
+            <input type="text" id="headline" class="form-control" placeholder="Enter news headline..." required />
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary predict-btn">
+                Predict
+                <span class="loading-spinner" id="loadingSpinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </span>
+            </button>
+        </div>
+    </form>
+    <div class="result text-center mt-4" id="result"></div>
+</section>
+
+<section id="about" class="container my-5">
+    <h2 class="text-center mb-4">User Testimonials</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="testimonial-card">
+                <img src="https://images.unsplash.com/photo-1524117481987-352c0a042c8d" alt="User A" class="testimonial-img" />
+                <p>"This app helped me avoid misinformation!"</p>
+                <p>-Keshav Priyam</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="testimonial-card">
+                <img src="https://link-to-your-uploaded-image.com/kunal.jpeg" alt="User B" class="testimonial-img" />
+                <p>"Incredible tool for discerning fake news!"</p>
+                <p>-Kunal</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="testimonial-card">
+                <img src="https://images.unsplash.com/photo-1596495572206-42ff6b772cb1" alt="User C" class="testimonial-img" />
+                <p>"A must-have for anyone who reads news!"</p>
+                <p>-Priyanshu Joshi</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <p>
+        Follow us on 
+        <a href="#" class="text-white"><i class="fab fa-facebook"></i></a>
+        <a href="#" class="text-white"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
+    </p>
+    <p>
+        <a href="#" class="text-white">Legal</a> | <a href="#" class="text-white">Privacy Policy</a>
+    </p>
+</footer>
+
+<script>
+    document.getElementById('newsForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        document.getElementById('loadingSpinner').style.display = 'inline-block';
+
+        const headline = document.getElementById('headline').value;
+
+        fetch('/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ headline: headline }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('result').innerText = `This news is likely ${data.result}.`;
+            document.getElementById('loadingSpinner').style.display = 'none';
+        })
+        .catch(error => {
+            document.getElementById('result').innerText = 'Error occurred while predicting.';
+            document.getElementById('loadingSpinner').style.display = 'none';
+        });
+    });
+</script>
+</body>
+</html>
